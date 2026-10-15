@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error 500 Servidor</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Montserrat|Roboto+Slab");
+
+      * {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      .centered {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      h1 {
+        margin-bottom: 50px;
+        font-family: "Montserrat", sans-serif;
+        font-size: 50px;
+      }
+
+      .message {
+        display: inline-block;
+        line-height: 1.2;
+        transition: line-height 0.2s, width 0.2s;
+        overflow: hidden;
+      }
+
+      .message,
+      .hidden {
+        font-family: "Roboto Slab", serif;
+        font-size: 18px;
+      }
+
+      .hidden {
+        color: #fff;
+      }
+
+      a:link,
+      a:visited {
+        font-family: "Roboto Slab", serif;
+        background-color: white;
+        color: black;
+        border: 2px solid #ffc107;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      a:hover,
+      a:active {
+        background-color: #fd7e14;
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <section class="centered">
+      <h1>ERROR 500 SERVIDOR</h1>
+      <div class="container">
+        <span class="message" id="js-whoops"></span>
+        <span class="message" id="js-appears"></span>
+        <span class="message" id="js-error"></span>
+        <span class="message" id="js-apology"></span>
+        <div><span class="hidden" id="js-hidden">Mensaje Aquí</span></div>
+      </div>
+      <!-- <a href="src/salir.php" target="_blank">Regresar</a> -->
+    </section>
+    <script>
+      // Aquí están los diferentes mensajes que utilizaremos para crear el mensaje visible del error 500
+      const messages = [
+        [
+          "Ups.",
+          "Oops.",
+          "Perdón.",
+          "Ay, Dios.",
+          "Vaya caca.",
+          "Hm...",
+          "Esto es incómodo.",
+          "Vaya cielos.",
+        ],
+        [
+          "Parece que",
+          "Se ve como",
+          "Desafortunadamente,",
+          "Resulta que",
+          "Lamentablemente,",
+          "De repente",
+        ],
+        [
+          "hubo un error.",
+          "metimos la pata.",
+          "pasó algo malo.",
+          "el servidor se cayó.",
+          "apareció un error.",
+          "alguien hizo una travesura.",
+          "¡hadas entraron al servidor!",
+          "el servidor hizo una rabieta.",
+          "el sitio web tuvo un mal día.",
+          "nuestro código falló.",
+        ],
+        [
+          "Lo siento.",
+          "Disculpas.",
+          "Nuestro error.",
+          "Día triste.",
+          "Estamos bastante arrepentidos.",
+          "Perdona.",
+        ],
+      ];
+
+      // Estos son los diferentes elementos que vamos a llenar. Están en el mismo orden que el array de mensajes
+      const messageElements = [
+        document.querySelector("#js-whoops"),
+        document.querySelector("#js-appears"),
+        document.querySelector("#js-error"),
+        document.querySelector("#js-apology"),
+      ];
+
+      // Usaremos este elemento para calcular el ancho
+      const widthElement = document.querySelector("#js-hidden");
+      // Llevamos un seguimiento del último tipo de mensaje que se mostró
+      let lastMessageType = -1;
+      // Con qué frecuencia debe cambiar el mensaje de la página
+      let messageTimer = 4000;
+
+      // Cuando el documento se carga, configuramos los mensajes iniciales Y establecemos un temporizador para establecer mensajes
+      document.addEventListener("DOMContentLoaded", (event) => {
+        setupMessages();
+        setInterval(() => {
+          swapMessage();
+        }, messageTimer);
+      });
+
+      // Obtener mensajes iniciales para cada elemento de mensaje
+      function setupMessages() {
+        messageElements.forEach((element, index) => {
+          let newMessage = getNewMessage(index);
+          element.innerText = newMessage;
+        });
+      }
+
+      // Establecer el ancho de un elemento dado para que coincida con el ancho de su texto
+      function calculateWidth(element, message) {
+        // Usamos nuestro elemento oculto para obtener el ancho del texto. Luego lo usamos para establecer el ancho del elemento real
+        widthElement.innerText = message;
+        let newWidth = widthElement.getBoundingClientRect().width;
+        element.style.width = `${newWidth}px`;
+      }
+
+      // Cambiar un mensaje por uno de los tipos de mensaje
+      function swapMessage() {
+        let toSwapIndex = getNewSwapIndex();
+        let newMessage = getNewMessage(toSwapIndex);
+        // Animar la desaparición, establecer el ancho y reaparición
+        messageElements[toSwapIndex].style.lineHeight = "0";
+        // una vez que la altura de la línea haya terminado de hacer la transición, establecemos el ancho del elemento y el mensaje
+        setTimeout(() => {
+          // asegurarnos de que el elemento tenga un ancho establecido para las transiciones
+          checkWidthSet(toSwapIndex, messageElements[toSwapIndex].innerText);
+          // establecer el nuevo texto
+          messageElements[toSwapIndex].innerText = newMessage;
+          // establecer el nuevo ancho
+          calculateWidth(messageElements[toSwapIndex], newMessage);
+        }, 200);
+        // una vez que el ancho haya terminado, hacemos la transición de la altura de la línea de vuelta a 1 para poder ver el mensaje
+        setTimeout(() => {
+          messageElements[toSwapIndex].style.lineHeight = "1.2";
+        }, 400);
+      }
+
+      // Necesitamos asegurarnos de que el elemento en el índice pasado tenga un ancho establecido para poder usar transiciones
+      function checkWidthSet(index, message) {
+        if (false == messageElements[index].style.width) {
+          messageElements[
+            index
+          ].style.width = `${messageElements[index].clientWidth}px`;
+        }
+      }
+
+      // Devolver un nuevo índice para intercambiar el mensaje. No debe ser el mismo que el último tipo de mensaje intercambiado
+      function getNewSwapIndex() {
+        let newMessageIndex = Math.floor(Math.random() * messages.length);
+        while (lastMessageType == newMessageIndex) {
+          newMessageIndex = Math.floor(Math.random() * messages.length);
+        }
+        return newMessageIndex;
+      }
+
+      // Obtener un nuevo mensaje para el elemento de mensaje.
+      function getNewMessage(toSwapIndex) {
+        const messagesArray = messages[toSwapIndex];
+        const previousMessage = messageElements[toSwapIndex].innerText;
+        // Obtener un nuevo índice aleatorio y el mensaje en ese índice
+        let newMessageIndex = Math.floor(Math.random() * messagesArray.length);
+        let newMessage = messagesArray[newMessageIndex];
+        // asegurémonos de que no sean iguales al mensaje que ya está allí
+        while (newMessage == previousMessage) {
+          newMessageIndex = Math.floor(Math.random() * messagesArray.length);
+          newMessage = messagesArray[newMessageIndex];
+        }
+        return newMessage;
+      }
+    </script>
+  </body>
+</html>

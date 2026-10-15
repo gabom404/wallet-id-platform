@@ -1,0 +1,27 @@
+# Configuration & Credentials
+config.php
+admin/config.php
+portal/config.php
+.env
+.env.*
+*.local
+
+# Operating System Files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary & Log Files
+*.log
+tmp/
+temp/
+
+# IDE & Editor Directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build & Dependency Directories
+node_modules/
+vendor/
