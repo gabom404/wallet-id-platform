@@ -13,9 +13,9 @@ if (!empty($_SESSION['active'])) {
         } else {
 
 
-            $user = mysqli_real_escape_string($conexion, $_POST['usuario']);
-            $clave = mysqli_real_escape_string($conexion, $_POST['clave']);
-            $query = mysqli_query($conexion, "SELECT * FROM usuario WHERE usuario = '$user' AND estado = 1");
+            $user = $_POST['usuario'];
+            $clave = $_POST['clave'];
+            $query = safe_query($conexion, 'SELECT * FROM usuario WHERE usuario = ? AND estado = 1', [$user]);
 
 
             mysqli_close($conexion);

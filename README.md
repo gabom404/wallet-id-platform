@@ -13,7 +13,7 @@
 
 ## 📋 Table of Contents
 
-- [STAR Methodology Summary](#-star-methodology-summary)
+- [Overview](#-overview)
 - [System Architecture](#-system-architecture)
 - [Core Features](#-core-features)
 - [Database Entity-Relationship Schema](#-database-entity-relationship-schema)
@@ -25,14 +25,14 @@
 
 ---
 
-## 🌟 STAR Methodology Summary
+## 🌟 Overview
 
 | Element | Description |
 |---|---|
 | **Situation** | Educational institutions and closed campuses experience severe bottlenecks during peak cafeteria lunch periods due to cash transactions, lost or stolen physical money, and lack of transparency for parents and students regarding daily meal expenditures and remaining funds. Traditional POS tools lack integrated cardholder self-service portals and suffer from tight coupling with hardcoded institutional parameters. |
 | **Task** | Engineer a unified, secure, dual-portal digital wallet ecosystem capable of processing sub-second barcode student ID checkouts, real-time balance deductions, immediate cashier-assisted top-ups, refund handling, itemized thermal receipt generation, and a dedicated mobile-responsive self-service cardholder portal with complete transaction audit trails. |
 | **Action** | Architected the **WalletID Platform** with a decoupled dual-portal hierarchy (`admin/` POS and `portal/` cardholder self-service). Implemented salted BCrypt password security (`PASSWORD_BCRYPT`), an 11-permission Role-Based Access Control (RBAC) engine, thermal ticket generation with Code128 barcodes via FPDF, and an environment-aware database abstraction layer (`config.example.php`). Sanitized all hardcoded institutional dependencies into neutral, production-ready white-label branding. |
-| **Result** | Achieved cashier checkout times under 3 seconds per student ID scan, eliminated physical cash vulnerabilities in cafeteria lines, provided parents and students with 100% transparent purchase logs, and delivered a turnkey package verifiable across PHP 8.0 through PHP 8.4 environments. |
+| **Result** | Cashless checkout by student ID, cashier-assisted top-ups and refunds, and a self-service portal where cardholders review balances and purchase history. All queries that receive external input use parameterized mysqli prepared statements (`lib/safe_query.php`). |
 
 ---
 

@@ -3,7 +3,7 @@ include_once "includes/header.php";
 require_once "../conexion.php";
 $id_user = $_SESSION['idUser'];
 $permiso = "Registro Venta";
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 $existe = mysqli_fetch_all($sql);
 if (empty($existe) && $id_user != 1) {
     header("Location: permisos.php");
@@ -17,7 +17,7 @@ if (empty($_POST['fechaf'])) {
     $fecha = $_POST['fechaf'];
 }
 
-    $query = mysqli_query($conexion, "SELECT * FROM ventas WHERE fecha LIKE '%$fecha%'");
+    $query = safe_query($conexion, 'SELECT * FROM ventas WHERE fecha LIKE ?', ['%' . $fecha . '%']);
 
 ?>
 <form action="reporte.php" method="POST">
@@ -44,8 +44,8 @@ if (empty($_POST['fechaf'])) {
             if(empty($row['fecha'])){
 
             }else{
-                $queryMAX = mysqli_query($conexion, "SELECT COUNT(idv) AS ventas_realizadas FROM ventas WHERE fecha LIKE '%$fecha%'");
-                $queryTOTAL = mysqli_query($conexion, "SELECT SUM(total) AS total_ventas FROM ventas WHERE fecha LIKE '%$fecha%'");
+                $queryMAX = safe_query($conexion, 'SELECT COUNT(idv) AS ventas_realizadas FROM ventas WHERE fecha LIKE ?', ['%' . $fecha . '%']);
+                $queryTOTAL = safe_query($conexion, 'SELECT SUM(total) AS total_ventas FROM ventas WHERE fecha LIKE ?', ['%' . $fecha . '%']);
                     while ($rowm = mysqli_fetch_assoc($queryMAX)) {
                         while ($rowt = mysqli_fetch_assoc($queryTOTAL)) {
                             $cantidad_ventas = $rowm['ventas_realizadas'];

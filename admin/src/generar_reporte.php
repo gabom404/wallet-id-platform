@@ -9,8 +9,8 @@ function Header()
     $fecha = $_REQUEST['fecha'];
     $config = mysqli_query($conexion, "SELECT * FROM configuracion");
     $datos = mysqli_fetch_assoc($config);
-    $queryMAX = mysqli_query($conexion, "SELECT COUNT(idv) AS ventas_realizadas FROM ventas WHERE fecha LIKE '%$fecha%'");
-    $queryTOTAL = mysqli_query($conexion, "SELECT SUM(total) AS total_ventas FROM ventas WHERE fecha LIKE '%$fecha%'");
+    $queryMAX = safe_query($conexion, 'SELECT COUNT(idv) AS ventas_realizadas FROM ventas WHERE fecha LIKE ?', ['%' . $fecha . '%']);
+    $queryTOTAL = safe_query($conexion, 'SELECT SUM(total) AS total_ventas FROM ventas WHERE fecha LIKE ?', ['%' . $fecha . '%']);
     $ventas_generadas = mysqli_fetch_assoc($queryMAX);
     $total_diario = mysqli_fetch_assoc($queryTOTAL);
 
@@ -93,15 +93,15 @@ $pdf->Cell(25, 7, utf8_decode('Precio'),1,0,'C',0);
 $pdf->Cell(25, 7, utf8_decode('Total'),1,1,'C',0);
 require("../conexion.php");
 $fecha = $_REQUEST['fecha'];
-$queryMAX = mysqli_query($conexion, "SELECT COUNT(idv) AS ventas_realizadas FROM ventas WHERE fecha LIKE '%$fecha%'");
-$queryTOTAL = mysqli_query($conexion, "SELECT SUM(total) AS total_ventas FROM ventas WHERE fecha LIKE '%$fecha%'");
+$queryMAX = safe_query($conexion, 'SELECT COUNT(idv) AS ventas_realizadas FROM ventas WHERE fecha LIKE ?', ['%' . $fecha . '%']);
+$queryTOTAL = safe_query($conexion, 'SELECT SUM(total) AS total_ventas FROM ventas WHERE fecha LIKE ?', ['%' . $fecha . '%']);
 $ventas_generadas = mysqli_fetch_assoc($queryMAX);
 $total_diario = mysqli_fetch_assoc($queryTOTAL);
 
-$ventas = mysqli_query($conexion,"SELECT * FROM ventas WHERE fecha LIKE '%$fecha%'");
+$ventas = safe_query($conexion, 'SELECT * FROM ventas WHERE fecha LIKE ?', ['%' . $fecha . '%']);
 $i = 1;
 while ($row = mysqli_fetch_assoc($ventas)) {
-    $ventas_productos = mysqli_query($conexion, "SELECT d.*, p.codproducto, p.descripcion FROM detalle_venta d INNER JOIN producto p ON d.id_producto = p.codproducto WHERE d.id_venta = '".$row['idv']."'");
+    $ventas_productos = safe_query($conexion, 'SELECT d.*, p.codproducto, p.descripcion FROM detalle_venta d INNER JOIN producto p ON d.id_producto = p.codproducto WHERE d.id_venta = ?', [$row['idv']]);
     $descripcion_ventas = mysqli_fetch_assoc($ventas_productos);
 // En esta parte estan los encabezados
 

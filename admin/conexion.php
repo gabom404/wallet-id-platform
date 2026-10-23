@@ -33,3 +33,5 @@ if (!$conexion) {
 
 mysqli_select_db($conexion, $bd) or die("Error al seleccionar la base de datos: " . mysqli_error($conexion));
 mysqli_set_charset($conexion, defined('DB_CHARSET') ? DB_CHARSET : 'utf8mb4');
+
+require_once __DIR__ . '/../lib/safe_query.php';

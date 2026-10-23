@@ -15,26 +15,26 @@ $factotal = $_GET['v'];
 $idcliente = $_GET['cl'];
 $config = mysqli_query($conexion, "SELECT * FROM configuracion");
 $datos = mysqli_fetch_assoc($config);
-$clientes = mysqli_query($conexion, "SELECT * FROM users WHERE id = $idcliente");
+$clientes = safe_query($conexion, 'SELECT * FROM users WHERE id = ?', [$idcliente]);
 $datosC = mysqli_fetch_assoc($clientes);
-$ventas = mysqli_query($conexion, "SELECT d.*, p.codproducto, p.descripcion FROM detalle_devoluciones d INNER JOIN producto p ON d.id_producto = p.codproducto WHERE d.id_venta = $id");
-$ventas1 = mysqli_query($conexion, "SELECT * FROM detalle_devoluciones WHERE id_venta = $id");
+$ventas = safe_query($conexion, 'SELECT d.*, p.codproducto, p.descripcion FROM detalle_devoluciones d INNER JOIN producto p ON d.id_producto = p.codproducto WHERE d.id_venta = ?', [$id]);
+$ventas1 = safe_query($conexion, 'SELECT * FROM detalle_devoluciones WHERE id_venta = ?', [$id]);
 $resultado = mysqli_fetch_assoc($ventas1);
 $precio = $resultado['precio'];
 $prt = $resultado['cantidad'];
 $barcode = $resultado['barcode'];
 $cantidad = $resultado['cantidad'];
-$query = mysqli_query($conexion, "SELECT * FROM users WHERE id = '$idcliente'");
+$query = safe_query($conexion, 'SELECT * FROM users WHERE id = ?', [$idcliente]);
 $resultado = mysqli_fetch_assoc($query);
 $cantidad_actual = $resultado['funds'];
-$totalpagar = mysqli_query($conexion, "SELECT SUM(precio * cantidad) AS totalpagar FROM detalle_devoluciones WHERE id_venta = " . $id . "");
-$consultotal = mysqli_query($conexion, "SELECT SUM(precio * cantidad) AS totalpagar FROM detalle_devoluciones WHERE id_venta = " . $id . "");
+$totalpagar = safe_query($conexion, 'SELECT SUM(precio * cantidad) AS totalpagar FROM detalle_devoluciones WHERE id_venta = ?', [$id]);
+$consultotal = safe_query($conexion, 'SELECT SUM(precio * cantidad) AS totalpagar FROM detalle_devoluciones WHERE id_venta = ?', [$id]);
 
 # Cajero #
-$qcashier = mysqli_query($conexion, "SELECT * FROM devoluciones WHERE id_cliente = $idcliente  AND idv = '$id'");
+$qcashier = safe_query($conexion, 'SELECT * FROM devoluciones WHERE id_cliente = ?  AND idv = ?', [$idcliente, $id]);
 $resultadoc = mysqli_fetch_assoc($qcashier);
 $idcashier = $resultadoc['id_usuario'];
-$q2cashier = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = $idcashier");
+$q2cashier = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$idcashier]);
 $nresultadoc = mysqli_fetch_assoc($q2cashier);
 $cashier2 = $nresultadoc['nombre'];
 

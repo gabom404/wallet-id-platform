@@ -2,7 +2,7 @@
 include "../conexion.php";
 $id_user = $_SESSION['idUser'];
 $permiso = "Productos";
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 $existe = mysqli_fetch_all($sql);
 if (empty($existe) && $id_user != 1) {
     header("Location: permisos.php");
@@ -22,7 +22,7 @@ if (!empty($_POST)) {
                 ¡Completa los campos vacíos!
             </div>';
     } else {
-        $query = mysqli_query($conexion, "SELECT * FROM producto WHERE codigo = '$codigo'");
+        $query = safe_query($conexion, 'SELECT * FROM producto WHERE codigo = ?', [$codigo]);
         $result = mysqli_fetch_array($query);
         if ($result > 0) {
             $alert = '<div class="alert alert-warning" role="alert">
@@ -41,7 +41,7 @@ if (!empty($_POST)) {
         ¡Costos superan ingresos, afectando las ganancias!
       </div>';
                 } else {
-                    $query_insert = mysqli_query($conexion, "INSERT INTO producto(codigo,descripcion,precio,precio_v,existencia,existencia_m,usuario_id) values ('$codigo', '$producto','$precio','$preciov','$cantidad','$cantidadm','$usuario_id')");
+                    $query_insert = safe_query($conexion, 'INSERT INTO producto(codigo,descripcion,precio,precio_v,existencia,existencia_m,usuario_id) values (?, ?,?,?,?,?,?)', [$codigo, $producto, $precio, $preciov, $cantidad, $cantidadm, $usuario_id]);
                     if ($query_insert) {
                         $alert = '<div class="alert alert-success" role="alert">
         ¡Producto agregado con éxito!

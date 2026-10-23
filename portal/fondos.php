@@ -8,7 +8,7 @@ if (empty($_SESSION['now'])) {
     $nombre = $_SESSION['name'];
     $id_user = $_SESSION['id'];
 
-    $query = mysqli_query($conexion, "SELECT * FROM fondos WHERE id_cliente = '$id_user'");
+    $query = safe_query($conexion, 'SELECT * FROM fondos WHERE id_cliente = ?', [$id_user]);
 }
 
 ?>

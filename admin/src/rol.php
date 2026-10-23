@@ -2,8 +2,8 @@
     require_once "../conexion.php";
     $id = base64_decode($_GET['id']);
     $sqlpermisos = mysqli_query($conexion, "SELECT * FROM permisos");
-    $usuarios = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = $id");
-    $consulta = mysqli_query($conexion, "SELECT * FROM detalle_permisos WHERE id_usuario = $id");
+    $usuarios = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$id]);
+    $consulta = safe_query($conexion, 'SELECT * FROM detalle_permisos WHERE id_usuario = ?', [$id]);
     $resultUsuario = mysqli_num_rows($usuarios);
     if (empty($resultUsuario)) {
         header("Location: usuarios.php");
@@ -15,10 +15,10 @@
     if (isset($_POST['permisos'])) {
         $id_user = base64_decode($_GET['id']);
         $permisos = $_POST['permisos'];
-        mysqli_query($conexion, "DELETE FROM detalle_permisos WHERE id_usuario = $id_user");
+        safe_query($conexion, 'DELETE FROM detalle_permisos WHERE id_usuario = ?', [$id_user]);
         if ($permisos != "") {
             foreach ($permisos as $permiso) {
-                $sql = mysqli_query($conexion, "INSERT INTO detalle_permisos(id_usuario, id_permiso) VALUES ($id_user,$permiso)");
+                $sql = safe_query($conexion, 'INSERT INTO detalle_permisos(id_usuario, id_permiso) VALUES (?,?)', [$id_user, $permiso]);
                 if ($sql == 1) {
                     header("Location: rol.php?id=" . urlencode(base64_encode($id_user)) . "&m=si");
                 } else {

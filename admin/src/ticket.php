@@ -8,21 +8,21 @@ if (isset($_POST['cantidad'])) {
     $id_usuario = $_POST['idusuario'];
     $codigo = $_POST['cod_cliente'];
     $cantidad = $_POST['cantidad'];
-    $clientes = mysqli_query($conexion, "SELECT * FROM users WHERE id = $id_cliente");
+    $clientes = safe_query($conexion, 'SELECT * FROM users WHERE id = ?', [$id_cliente]);
     $datosC = mysqli_fetch_assoc($clientes);
     $config = mysqli_query($conexion, "SELECT * FROM configuracion");
     $datos = mysqli_fetch_assoc($config);
-    $query = mysqli_query($conexion, "SELECT * FROM users WHERE full_name = '$codigo'");
+    $query = safe_query($conexion, 'SELECT * FROM users WHERE full_name = ?', [$codigo]);
     $resultado = mysqli_fetch_assoc($query);
     $nombre = $resultado['full_name'];
     $cantidad_actual = $resultado['funds'];
     $cantidad_total = $cantidad_actual + $cantidad;
-    $query_insert = mysqli_query($conexion, "UPDATE  users SET funds = '$cantidad_total' WHERE full_name = '$codigo'");
-    $insertar = mysqli_query($conexion, "INSERT INTO fondos(id_cliente, total, id_usuario) VALUES ($id_cliente, '$cantidad', $id_usuario)");
+    $query_insert = safe_query($conexion, 'UPDATE  users SET funds = ? WHERE full_name = ?', [$cantidad_total, $codigo]);
+    $insertar = safe_query($conexion, 'INSERT INTO fondos(id_cliente, total, id_usuario) VALUES (?, ?, ?)', [$id_cliente, $cantidad, $id_usuario]);
     $id_maximo = mysqli_query($conexion, "SELECT MAX(idv) AS total FROM fondos");
     $resultId = mysqli_fetch_assoc($id_maximo);
     $ultimoId = $resultId['total'];
-    $insertarDet = mysqli_query($conexion, "INSERT INTO detalle_fondos(id_venta, cantidad ) VALUES ($ultimoId, $cantidad)");
+    $insertarDet = safe_query($conexion, 'INSERT INTO detalle_fondos(id_venta, cantidad ) VALUES (?, ?)', [$ultimoId, $cantidad]);
 
     if ($_POST['cantidad'] == "" || $_POST['cod_cliente'] == "") {
         echo '<script type="text/javascript">

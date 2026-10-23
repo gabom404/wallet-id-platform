@@ -8,17 +8,17 @@ if (empty($_SESSION['now'])) {
 }else{
   $nombre = $_SESSION['name'];
   $id_user = $_SESSION['id'];
-  $query = mysqli_query($conexion, "SELECT * FROM users WHERE id = '$id_user' AND state = 1");
+  $query = safe_query($conexion, 'SELECT * FROM users WHERE id = ? AND state = 1', [$id_user]);
   $result = mysqli_fetch_assoc($query);
   $funds = $result['funds'];
   $codigo = $result['id_code'];
   $grado = $result['grade']; 
 
-  $query1 = mysqli_query($conexion, "SELECT * FROM ventas WHERE id_cliente = '$id_user' ORDER BY fecha DESC LIMIT 1");
+  $query1 = safe_query($conexion, 'SELECT * FROM ventas WHERE id_cliente = ? ORDER BY fecha DESC LIMIT 1', [$id_user]);
   $result1 = mysqli_fetch_assoc($query1);
   $last = $result1['total'];
 
-  $query2 = mysqli_query($conexion, "SELECT * FROM fondos WHERE id_cliente = '$id_user' ORDER BY fecha DESC LIMIT 1");
+  $query2 = safe_query($conexion, 'SELECT * FROM fondos WHERE id_cliente = ? ORDER BY fecha DESC LIMIT 1', [$id_user]);
   $result2 = mysqli_fetch_assoc($query2);
   $abono = $result2['total'];
 

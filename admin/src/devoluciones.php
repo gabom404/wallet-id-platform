@@ -3,7 +3,7 @@ include_once "includes/header.php";
 require_once "../conexion.php";
 $id_user = $_SESSION['idUser'];
 $permiso = "Registro Devoluciones";
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 $existe = mysqli_fetch_all($sql);
 if (empty($existe) && $id_user != 1) {
     header("Location: permisos.php");
@@ -24,7 +24,7 @@ $query = mysqli_query($conexion, "SELECT v.*, c.id, c.full_name, c.id_code FROM 
         </thead>
         <tbody>
             <?php while ($row = mysqli_fetch_assoc($query)) {
-                $query1 = mysqli_query($conexion, "SELECT barcode FROM detalle_devoluciones WHERE id_venta = '" . $row['idv'] . "' ");
+                $query1 = safe_query($conexion, 'SELECT barcode FROM detalle_devoluciones WHERE id_venta = ? ', [$row['idv']]);
                 while ($barcode = mysqli_fetch_assoc($query1)) {
                     $barcoder = $barcode['barcode'];
                 } ?> <tr>

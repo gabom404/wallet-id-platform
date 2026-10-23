@@ -2,7 +2,7 @@
 require "../conexion.php";
 $id_user = $_SESSION['idUser'];
 $permiso = "Administradores";
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 $idusuario = $_REQUEST['id'];
 $existe = mysqli_fetch_all($sql);
 if (empty($existe) && $id_user != 1) {
@@ -17,14 +17,14 @@ if (!empty($_POST)) {
         $nombre = $_POST['nombre'];
         $correo = $_POST['correo'];
         $usuario = $_POST['usuario'];
-        $queryrol = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = $idusuario");
+        $queryrol = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$idusuario]);
         $resultrol = mysqli_fetch_assoc($queryrol);
         if ($_POST['rol'] == '') {
             $rol = $resultrol['rol'];
         } else {
             $rol = $_POST['rol'];
         }
-        $sql_update = mysqli_query($conexion, "UPDATE usuario SET nombre = '$nombre', correo = '$correo' , usuario = '$usuario', rol = '$rol' WHERE idusuario = '$idusuario'");
+        $sql_update = safe_query($conexion, 'UPDATE usuario SET nombre = ?, correo = ? , usuario = ?, rol = ? WHERE idusuario = ?', [$nombre, $correo, $usuario, $rol, $idusuario]);
         $alert = '<div class="alert alert-success" role="alert">¡Datos actualizados con éxito!</div>';
     }
 }
@@ -35,7 +35,7 @@ if (empty($_REQUEST['id'])) {
     header("Location: usuarios.php");
 }
 $idusuario = base64_decode($_REQUEST['id']);
-$sql = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = '$idusuario'");
+$sql = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$idusuario]);
 $result_sql = mysqli_num_rows($sql);
 if ($result_sql == 0) {
     header("Location: usuarios.php");
@@ -74,11 +74,11 @@ if ($result_sql == 0) {
                     </div>
 
                     <?php
-                    $query = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = '" . $id_user . "'");
+                    $query = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$id_user]);
                     $datau = mysqli_fetch_array($query);
                     $rolu = $datau['rol'];
                     $idusuario = base64_decode($_REQUEST['id']);
-                    $queryu = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = $idusuario");
+                    $queryu = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$idusuario]);
                     $resultu = mysqli_fetch_assoc($queryu);
                     if ($id_user == $idusuario) {
                         echo '

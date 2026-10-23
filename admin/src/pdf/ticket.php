@@ -15,22 +15,22 @@ $factotal = $_GET['v'];
 $idcliente = $_GET['cl'];
 $config = mysqli_query($conexion, "SELECT * FROM configuracion");
 $datos = mysqli_fetch_assoc($config);
-$clientes = mysqli_query($conexion, "SELECT * FROM users WHERE id = $idcliente");
+$clientes = safe_query($conexion, 'SELECT * FROM users WHERE id = ?', [$idcliente]);
 $datosC = mysqli_fetch_assoc($clientes);
-$ventas1 = mysqli_query($conexion, "SELECT * FROM detalle_fondos WHERE id_venta = $id");
+$ventas1 = safe_query($conexion, 'SELECT * FROM detalle_fondos WHERE id_venta = ?', [$id]);
 $resultado = mysqli_fetch_assoc($ventas1);
 $cantidad = $resultado['cantidad'];
 $barcode = $resultado['barcode'];
-$query = mysqli_query($conexion, "SELECT * FROM users WHERE id = '$idcliente'");
+$query = safe_query($conexion, 'SELECT * FROM users WHERE id = ?', [$idcliente]);
 $resultado = mysqli_fetch_assoc($query);
 $cantidad_actual = $resultado['funds'];
 $cantidad_total = number_format($cantidad_actual - $cantidad, 2, '.', ',');
 
 # Cajero #
-$qcashier = mysqli_query($conexion, "SELECT * FROM fondos WHERE id_cliente = $idcliente  AND idv = '$id'");
+$qcashier = safe_query($conexion, 'SELECT * FROM fondos WHERE id_cliente = ?  AND idv = ?', [$idcliente, $id]);
 $resultadoc = mysqli_fetch_assoc($qcashier);
 $idcashier = $resultadoc['id_usuario'];
-$q2cashier = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = $idcashier");
+$q2cashier = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$idcashier]);
 $nresultadoc = mysqli_fetch_assoc($q2cashier);
 $cashier2 = $nresultadoc['nombre'];
 

@@ -3,7 +3,7 @@ error_reporting(0);
 include "../conexion.php";
 $id_user = $_SESSION['idUser'];
 $permiso = "Administradores";
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 $existe = mysqli_fetch_all($sql);
 if (empty($existe) && $id_user != 1) {
     header("Location: permisos.php");
@@ -11,7 +11,7 @@ if (empty($existe) && $id_user != 1) {
 
 $query = mysqli_query($conexion, "SELECT * FROM usuario ORDER BY estado DESC");
 $result = mysqli_num_rows($query);
-$queryu = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = $id_user");
+$queryu = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$id_user]);
 $resultu = mysqli_fetch_assoc($queryu);
 ?>
 
@@ -177,7 +177,7 @@ $resultu = mysqli_fetch_assoc($queryu);
                 {
                     $query1 = mysqli_query($conexion, "SELECT * FROM usuario WHERE rol != 'Owner' AND rol != 'Co-Owner'");
                     $counter++;
-                    $query2 = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = '" . $id_user . "'");
+                    $query2 = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$id_user]);
                     $data2 = mysqli_fetch_assoc($query2);
                     if ($data2['estado'] == 1) {
                         $estado = '<span class="badge badge-pill badge-success">Activo</span>';
@@ -243,7 +243,7 @@ $resultu = mysqli_fetch_assoc($queryu);
                     $query1 = mysqli_query($conexion, "SELECT * FROM usuario WHERE rol != 'Owner' AND rol != 'Co-Owner'  AND rol != 'SuperAdmin'");
 
                     $counter++;
-                    $query2 = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = '" . $id_user . "'");
+                    $query2 = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$id_user]);
                     $data2 = mysqli_fetch_assoc($query2);
                     if ($data2['estado'] == 1) {
                         $estado = '<span class="badge badge-pill badge-success">Activo</span>';
@@ -307,7 +307,7 @@ $resultu = mysqli_fetch_assoc($queryu);
                     $query1 = mysqli_query($conexion, "SELECT * FROM usuario WHERE rol != 'Owner' AND rol != 'Co-Owner' AND rol != 'SuperAdmin'  AND rol != 'Admin'");
 
                     $counter++;
-                    $query2 = mysqli_query($conexion, "SELECT * FROM usuario WHERE idusuario = '" . $id_user . "'");
+                    $query2 = safe_query($conexion, 'SELECT * FROM usuario WHERE idusuario = ?', [$id_user]);
                     $data2 = mysqli_fetch_assoc($query2);
                     $acciones = '
                                 <a href="rol.php?id=' . urlencode(base64_encode($data2['idusuario'])) . '" class="btn btn-warning"><i class="fas fa-clipboard-list"></i></a>

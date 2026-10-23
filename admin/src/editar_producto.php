@@ -3,7 +3,7 @@ include_once "includes/header.php";
 include "../conexion.php";
 $id_user = $_SESSION['idUser'];
 $permiso = "Productos";
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 $existe = mysqli_fetch_all($sql);
 if (empty($existe) && $id_user != 1) {
   header("Location: permisos.php");
@@ -34,7 +34,7 @@ if (!empty($_POST)) {
         ¡Costos superan ingresos, afectando las ganancias!
       </div>';
       } else {
-        $query_update = mysqli_query($conexion, "UPDATE producto SET codigo = '$codigo', descripcion = '$producto', precio= '$precio', precio_v = '$preciov', existencia = '$cantidad', existencia_m = '$cantidadm' WHERE codproducto = $codproducto");
+        $query_update = safe_query($conexion, 'UPDATE producto SET codigo = ?, descripcion = ?, precio= ?, precio_v = ?, existencia = ?, existencia_m = ? WHERE codproducto = ?', [$codigo, $producto, $precio, $preciov, $cantidad, $cantidadm, $codproducto]);
         if ($query_update) {
           $alert = '<div class="alert alert-success" role="alert">
                 ¡Producto actualizado con éxito!
@@ -58,7 +58,7 @@ if (empty($_REQUEST['id'])) {
   if (!is_numeric($id_producto)) {
     header("Location: productos.php");
   }
-  $query_producto = mysqli_query($conexion, "SELECT * FROM producto WHERE codproducto = $id_producto");
+  $query_producto = safe_query($conexion, 'SELECT * FROM producto WHERE codproducto = ?', [$id_producto]);
   $result_producto = mysqli_num_rows($query_producto);
 
   if ($result_producto > 0) {

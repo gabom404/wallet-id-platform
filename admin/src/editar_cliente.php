@@ -6,7 +6,7 @@ $id_user = $_SESSION['idUser'];
 
 $permiso = "Comunidad Educativa";
 
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 
 $existe = mysqli_fetch_all($sql);
 
@@ -108,33 +108,33 @@ if (isset($_POST['editar_cliente'])) {
 
 
 
-        $sql_update = mysqli_query($conexion, "UPDATE users SET
+        $sql_update = safe_query($conexion, 'UPDATE users SET
 
-                full_name = '$nombre',
+                full_name = ?,
 
-                id_code = '$codigo',
+                id_code = ?,
 
-                email = '$email' ,
+                email = ? ,
 
-                grade = '$grade',
+                grade = ?,
 
-                section = '$section' ,
+                section = ? ,
 
-                specialty = '$specialty' ,
+                specialty = ? ,
 
-                telephone_number = '$telephone_number' ,
+                telephone_number = ? ,
 
-                responsible_names = '$responsible_names',
+                responsible_names = ?,
 
-                responsible_phones = '$responsible_phones',
+                responsible_phones = ?,
 
-                responsible_emails = '$responsible_emails',
+                responsible_emails = ?,
 
-                date_birth = '$datebirth'
+                date_birth = ?
 
-                user_type = '$usertype'
+                user_type = ?
 
-                WHERE id = $idcliente");
+                WHERE id = ?', [$nombre, $codigo, $email, $grade, $section, $specialty, $telephone_number, $responsible_names, $responsible_phones, $responsible_emails, $datebirth, $usertype, $idcliente]);
 
 
 
@@ -159,7 +159,7 @@ if (empty($_REQUEST['id'])) {
 
 $idcliente = $_REQUEST['id'];
 
-$sql = mysqli_query($conexion, "SELECT * FROM users WHERE id = $idcliente");
+$sql = safe_query($conexion, 'SELECT * FROM users WHERE id = ?', [$idcliente]);
 
 $result_sql = mysqli_num_rows($sql);
 

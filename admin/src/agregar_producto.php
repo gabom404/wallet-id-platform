@@ -3,7 +3,7 @@ include_once "includes/header.php";
 include "../conexion.php";
 $id_user = $_SESSION['idUser'];
 $permiso = "Productos";
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 $existe = mysqli_fetch_all($sql);
 if (empty($existe) && $id_user != 1) {
     header("Location: permisos.php");
@@ -15,7 +15,7 @@ if (empty($_GET['id'])) {
     if (!is_numeric($id_producto)) {
         header("Location: productos.php");
     }
-    $consulta = mysqli_query($conexion, "SELECT * FROM producto WHERE codproducto = $id_producto");
+    $consulta = safe_query($conexion, 'SELECT * FROM producto WHERE codproducto = ?', [$id_producto]);
     $data_producto = mysqli_fetch_assoc($consulta);
 }
 if (!empty($_POST)) {
@@ -35,7 +35,7 @@ if (!empty($_POST)) {
         </div>';
         } else {
             $total = $cantidad + $data_producto['existencia'];
-            $query_insert = mysqli_query($conexion, "UPDATE producto SET existencia = $total WHERE codproducto = $id_producto");
+            $query_insert = safe_query($conexion, 'UPDATE producto SET existencia = ? WHERE codproducto = ?', [$total, $id_producto]);
             if ($query_insert) {
                 $alert = '<div class="alert alert-success" role="alert">
                         ¡Producto actualizado con éxito!

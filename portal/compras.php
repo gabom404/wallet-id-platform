@@ -8,7 +8,7 @@ if (empty($_SESSION['now'])) {
     $nombre = $_SESSION['name'];
     $id_user = $_SESSION['id'];
 
-    $query = mysqli_query($conexion, "SELECT * FROM ventas WHERE id_cliente = '$id_user'");
+    $query = safe_query($conexion, 'SELECT * FROM ventas WHERE id_cliente = ?', [$id_user]);
 }
 
 ?>
@@ -43,13 +43,13 @@ include("navbar.php");
                             <tbody>
                                 <?php
                                 while ($row = mysqli_fetch_assoc($query)) {
-                                    $query1 = mysqli_query($conexion, "SELECT * FROM detalle_venta WHERE id_venta = " . $row['idv'] . "");
+                                    $query1 = safe_query($conexion, 'SELECT * FROM detalle_venta WHERE id_venta = ?', [$row['idv']]);
                                     while ($row1 = mysqli_fetch_assoc($query1)) {
                                         $producto = $row1['id_producto'];
                                         $cantidad = $row1['cantidad'];
                                     }
 
-                                    $query2 = mysqli_query($conexion, "SELECT * FROM producto WHERE codproducto = " . $producto . "");
+                                    $query2 = safe_query($conexion, 'SELECT * FROM producto WHERE codproducto = ?', [$producto]);
                                     while ($row2 = mysqli_fetch_assoc($query2)) {
                                         $nproducto = $row2['descripcion'];
                                         $precio = $row2['precio_v'];

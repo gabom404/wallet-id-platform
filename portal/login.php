@@ -11,9 +11,9 @@ if (!empty($_SESSION['active'])) {
             Ingresar usuario y contraseña
             </div>';
     } else {
-      $email = mysqli_real_escape_string($conexion, $_POST['email']);
-      $clave = mysqli_real_escape_string($conexion, $_POST['clave']);
-      $query = mysqli_query($conexion, "SELECT * FROM users WHERE email = '$email' AND state = 1");
+      $email = $_POST['email'];
+      $clave = $_POST['clave'];
+      $query = safe_query($conexion, 'SELECT * FROM users WHERE email = ? AND state = 1', [$email]);
       mysqli_close($conexion);
       $resultado = mysqli_num_rows($query);
       if ($resultado > 0) {

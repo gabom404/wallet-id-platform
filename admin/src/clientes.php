@@ -6,7 +6,7 @@ $id_user = $_SESSION['idUser'];
 
 $permiso = "Comunidad Educativa";
 
-$sql = mysqli_query($conexion, "SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = $id_user AND p.nombre = '$permiso'");
+$sql = safe_query($conexion, 'SELECT p.*, d.* FROM permisos p INNER JOIN detalle_permisos d ON p.id = d.id_permiso WHERE d.id_usuario = ? AND p.nombre = ?', [$id_user, $permiso]);
 
 $existe = mysqli_fetch_all($sql);
 
@@ -112,7 +112,7 @@ if (isset($_POST['crear_cliente'])) {
 
             $result = 0;
 
-            $query = mysqli_query($conexion, "SELECT * FROM users WHERE full_name = '$nombre'");
+            $query = safe_query($conexion, 'SELECT * FROM users WHERE full_name = ?', [$nombre]);
 
             $result = mysqli_fetch_array($query);
 
@@ -132,9 +132,9 @@ if (isset($_POST['crear_cliente'])) {
 
                     $image = img();
 
-                    $query_insert = mysqli_query($conexion, "INSERT INTO users(full_name, id_code, email, grade, section, specialty, telephone_number, password, responsible_names,responsible_phones, responsible_emails, date_birth, state, image, user_type)
+                    $query_insert = safe_query($conexion, 'INSERT INTO users(full_name, id_code, email, grade, section, specialty, telephone_number, password, responsible_names,responsible_phones, responsible_emails, date_birth, state, image, user_type)
 
-            values ('$nombre', '$codigo', '$email', '$grade', '$section', '$specialty', '$telephone_number', '$password', '$responsible_names',  '$responsible_phones', '$responsible_emails', '$datebirth', '$state', '$image', '$user_type')");
+            values (?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?)', [$nombre, $codigo, $email, $grade, $section, $specialty, $telephone_number, $password, $responsible_names, $responsible_phones, $responsible_emails, $datebirth, $state, $image, $user_type]);
 
                     if ($query_insert) {
 
@@ -156,9 +156,9 @@ if (isset($_POST['crear_cliente'])) {
 
                 } else {
 
-                    $query_insert = mysqli_query($conexion, "INSERT INTO users(full_name, id_code, email, grade, section, specialty, telephone_number, password, responsible_names,responsible_phones, responsible_emails, date_birth,state, image, user_type)
+                    $query_insert = safe_query($conexion, 'INSERT INTO users(full_name, id_code, email, grade, section, specialty, telephone_number, password, responsible_names,responsible_phones, responsible_emails, date_birth,state, image, user_type)
 
-            values ('$nombre', '$codigo', '$email', '$grade', '$section', '$specialty', '$telephone_number', '$password', '$responsible_names',  '$responsible_phones', '$responsible_emails', '$datebirth', '$state', 'img/default-profile-picture.png' ,'$user_type')");
+            values (?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, \'img/default-profile-picture.png\' ,?)', [$nombre, $codigo, $email, $grade, $section, $specialty, $telephone_number, $password, $responsible_names, $responsible_phones, $responsible_emails, $datebirth, $state, $user_type]);
 
                     if ($query_insert) {
 
